@@ -14,9 +14,13 @@ type TaskRoute struct {
 }
 
 func (tr *TaskRoute) GetAllTask(c *gin.Context) {
+	orderBy := c.Query("orderBy")
+	orderType := c.Query("orderType")
+	title := c.Query("title")
+	description := c.Query("description")
 	var task models.Task
 
-	tasks, err := task.FindAllTask(tr.DB)
+	tasks, err := task.FindAllTask(tr.DB, orderBy, orderType, title, description)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return

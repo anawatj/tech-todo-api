@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -63,9 +64,27 @@ func (t *Task) FindOneTask(db *sql.DB) error {
 	sql := "SELECT id,title,description,created_at,image,status FROM tasks WHERE id = $1"
 	return db.QueryRow(sql, t.ID).Scan(&t.ID, &t.Title, &t.Description, &t.CreatedAt, &t.Image, &t.Status)
 }
-func (t *Task) FindAllTask(db *sql.DB) ([]Task, error) {
-	sql := "SELECT id,title,description,created_at,image,status FROM tasks"
-	rows, err := db.Query(sql)
+func (t *Task) FindAllTask(db *sql.DB, orderBy string, orderType string, title string, description string) ([]Task, error) {
+	var emptyTitle string
+	if title == "" {
+		emptyTitle = ""
+	} else {
+		emptyTitle = "test"
+	}
+	var emptyDescription string
+	if description == "" {
+		emptyDescription = ""
+	} else {
+		emptyDescription = "test"
+	}
+	sql := "SELECT id,title,description,created_at,image,status FROM tasks WHERE (title LIKE $1 OR $2='') AND (description LIKE $3 OR $4='') "
+	if orderBy != "" {
+		sql = sql + " ORDER BY " + orderBy
+		if orderType != "" {
+			sql = sql + " " + orderType
+		}
+	}
+	rows, err := db.Query(sql, strings.Replace(strings.Replace(title, "*", "%", -1), "?", "_", -1), emptyTitle, strings.Replace(strings.Replace(description, "*", "%", -1), "?", "_", -1), emptyDescription)
 	if err != nil {
 		return nil, err
 	}
