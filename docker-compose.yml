@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - migrate
+    environment:
+      - APP_DB_HOST=db
+      - APP_DB_USERNAME=postgres
+      - APP_DB_PASSWORD=1234
+      - APP_DB_NAME=hugeman
+      - APP_SECRET=secret
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=hugeman
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+      
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      - db
+    volumes:
+      - ./db/migrations:/db/migrations
+    command: [ "-path", "/db/migrations", "-database",  "postgres://postgres:1234@db:5432/hugeman?sslmode=disable", "up" ]
+volumes:
+  db:
+    driver: local
