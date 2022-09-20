@@ -1,0 +1,126 @@
+definitions:
+  models.Task:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/tasks:
+    get:
+      consumes:
+      - application/json
+      description: get list Task
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Get List Task
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Create Task
+      parameters:
+      - description: Task data to be created
+        in: body
+        name: Task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Create Task
+      tags:
+      - tasks
+  /api/v1/tasks/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete task by id
+      operationId: deleteTask
+      parameters:
+      - description: id of task to be deleted
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Delete Task
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Get task by id
+      operationId: getTask
+      parameters:
+      - description: id of task to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Get Task
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Update task by id
+      operationId: updateTask
+      parameters:
+      - description: id of task to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task data to be updated
+        in: body
+        name: Task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Task'
+      summary: Update Task
+      tags:
+      - tasks
+swagger: "2.0"
