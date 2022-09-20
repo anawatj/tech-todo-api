@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"tech-exam-api/routes"
 
 	"github.com/gin-gonic/gin"
@@ -13,12 +12,9 @@ import (
 
 type App struct{}
 
-func (a *App) SetupRouter() *gin.Engine {
+func (a *App) SetupRouter(db *sql.DB) *gin.Engine {
 	r := gin.Default()
-	db := a.Initialize(os.Getenv("APP_DB_USERNAME"),
-		os.Getenv("APP_DB_PASSWORD"),
-		os.Getenv("APP_DB_NAME"),
-		os.Getenv("APP_DB_HOST"))
+
 	var tr routes.TaskRoute
 	tr.DB = db
 	r.GET("/api/v1/tasks", tr.GetAllTask)
