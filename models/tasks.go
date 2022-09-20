@@ -8,22 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type TaskStatus int64
+type TaskStatus string
 
 const (
-	InProgress TaskStatus = iota
-	Completed
+	InProgress TaskStatus = "IN_PROGRESS"
+	Completed  TaskStatus = "COMPLETED"
 )
-
-func (s TaskStatus) String() string {
-	switch s {
-	case InProgress:
-		return "IN_PROGRESS"
-	case Completed:
-		return "COMPLETED"
-	}
-	return "unknown"
-}
 
 type Task struct {
 	ID          uuid.UUID  `json:"id"`
@@ -36,7 +26,7 @@ type Task struct {
 
 func (t *Task) InsertTask(db *sql.DB) error {
 	sql := "INSERT INTO tasks(title,description,created_at,image,status) VALUES($1,$2,transaction_timestamp(),$3,$4) RETURNING id"
-	err := db.QueryRow(sql, t.Title, t.Description, t.Image, t.Status.String()).Scan(&t.ID)
+	err := db.QueryRow(sql, t.Title, t.Description, t.Image, t.Status).Scan(&t.ID)
 	if err != nil {
 		return err
 	}
@@ -45,7 +35,7 @@ func (t *Task) InsertTask(db *sql.DB) error {
 }
 func (t *Task) UpdateTask(db *sql.DB) error {
 	sql := "UPDATE tasks SET title = $1 , description=$2,image=$3,status=$4 WHERE id = $5"
-	_, err := db.Exec(sql, t.Title, t.Description, t.Image, t.Status.String(), t.ID)
+	_, err := db.Exec(sql, t.Title, t.Description, t.Image, t.Status, t.ID)
 	if err != nil {
 		return err
 	}
